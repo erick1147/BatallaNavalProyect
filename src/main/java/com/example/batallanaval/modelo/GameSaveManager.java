@@ -5,7 +5,6 @@ import com.example.batallanaval.interfaces.GameStateListener;
 import com.example.batallanaval.exceptions.GameSaveException;
 import com.example.batallanaval.exceptions.GameLoadException;
 import com.example.batallanaval.exceptions.GameCriticalException;
-import com.example.batallanaval.modelo.GameState;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 /**
  * Manager para el guardado automático del juego
  * Implementa el patrón Singleton y maneja la persistencia del estado del juego
+ * VERSIÓN MEJORADA - Reemplaza tu GameSaveManager.java actual
+ * Solo usa clases estándar de Java (sin dependencias externas)
  */
 public class GameSaveManager implements GameSaveInterface {
     
@@ -116,7 +117,7 @@ public class GameSaveManager implements GameSaveInterface {
                 }
             }
             
-            // Guardar el nuevo estado
+            // Guardar el nuevo estado usando ObjectOutputStream (Java estándar)
             gameState.setSaveTimestamp(System.currentTimeMillis());
             
             try (ObjectOutputStream oos = new ObjectOutputStream(
@@ -158,7 +159,11 @@ public class GameSaveManager implements GameSaveInterface {
         // Intentar cargar el archivo principal
         try {
             gameState = loadFromFile(saveFile);
-            System.out.println("✓ Archivo principal cargado exitosamente");
+            if (isValidGameState(gameState)) {
+                System.out.println("✓ Archivo principal cargado exitosamente");
+                notifyGameLoaded();
+                return gameState;
+            }
         } catch (Exception e) {
             System.err.println("Error cargando archivo principal: " + e.getMessage());
             
@@ -167,7 +172,11 @@ public class GameSaveManager implements GameSaveInterface {
                 try {
                     System.out.println("Intentando cargar desde backup...");
                     gameState = loadFromFile(backupFile);
-                    System.out.println("✓ Cargado desde archivo de backup");
+                    if (isValidGameState(gameState)) {
+                        System.out.println("✓ Cargado desde archivo de backup");
+                        notifyGameLoaded();
+                        return gameState;
+                    }
                 } catch (Exception backupError) {
                     throw new GameLoadException("Error al cargar tanto el archivo principal como el backup", 
                                                backupError);
@@ -177,16 +186,7 @@ public class GameSaveManager implements GameSaveInterface {
             }
         }
         
-        if (gameState == null) {
-            throw new GameLoadException("No se pudo cargar el estado del juego");
-        }
-        
-        // Notificar a los listeners
-        notifyGameLoaded();
-        
-        System.out.println("✓ Partida cargada exitosamente - Jugador: " + 
-                          gameState.getPlayerNickname());
-        return gameState;
+        throw new GameLoadException("No se pudo cargar el estado del juego");
     }
     
     /**
@@ -211,6 +211,31 @@ public class GameSaveManager implements GameSaveInterface {
         } catch (ClassNotFoundException e) {
             throw new GameLoadException("Error de versión: Clase no encontrada", e);
         }
+    }
+    
+    /**
+     * Valida que el estado del juego cargado sea válido
+     */
+    private boolean isValidGameState(GameState gameState) {
+        if (gameState == null) {
+            return false;
+        }
+        
+        // Verificar que tenga los campos básicos
+        if (gameState.getPlayerNickname() == null) {
+            gameState.setPlayerNickname("Capitán"); // Valor por defecto
+        }
+        
+        // Verificar que las listas de barcos existan
+        if (gameState.getPlayerShips() == null) {
+            gameState.setPlayerShips(new ArrayList<>());
+        }
+        if (gameState.getCpuShips() == null) {
+            gameState.setCpuShips(new ArrayList<>());
+        }
+        
+        // Si no tiene matrices, el juego las recreará
+        return true;
     }
     
     @Override
@@ -250,6 +275,40 @@ public class GameSaveManager implements GameSaveInterface {
         } catch (IOException e) {
             throw new GameSaveException("Error al eliminar los archivos de guardado", e);
         }
+    }
+    
+    /**
+     * Obtiene información sobre los archivos de guardado
+     */
+    public String getSaveInfo() {
+        StringBuilder info = new StringBuilder();
+        Path saveFile = fileHandler.getSaveFilePath();
+        Path backupFile = fileHandler.getBackupFilePath();
+        
+        if (Files.exists(saveFile)) {
+            try {
+                long size = Files.size(saveFile);
+                long lastModified = Files.getLastModifiedTime(saveFile).toMillis();
+                info.append("Archivo principal: ").append(size).append(" bytes, ")
+                    .append("modificado: ").append(new java.util.Date(lastModified))
+                    .append("\n");
+            } catch (IOException e) {
+                info.append("Archivo principal: Error leyendo información\n");
+            }
+        }
+        
+        if (Files.exists(backupFile)) {
+            try {
+                long size = Files.size(backupFile);
+                long lastModified = Files.getLastModifiedTime(backupFile).toMillis();
+                info.append("Backup: ").append(size).append(" bytes, ")
+                    .append("modificado: ").append(new java.util.Date(lastModified));
+            } catch (IOException e) {
+                info.append("Backup: Error leyendo información");
+            }
+        }
+        
+        return info.toString();
     }
     
     /**
