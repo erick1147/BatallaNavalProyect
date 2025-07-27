@@ -1,5 +1,4 @@
-// DraggableShape.java - Versión con Callback, Control de Arrastre y Sistema de Overlays
-package com.example.batallanaval;
+package com.example.batallanaval.vista;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -10,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.util.HashMap;
 import java.util.Map;
+import com.example.batallanaval.modelo.Constants;
+import com.example.batallanaval.modelo.GameLogic;
 
 public class DraggableShape {
 
@@ -32,7 +33,7 @@ public class DraggableShape {
     private final int heightCells;
 
     // Referencia a la lógica del juego para manejar colisiones
-    private Logic gameLogic;
+    private GameLogic gameLogic;
 
     // Callback para notificar cambios de posición
     private Runnable positionChangeCallback;
@@ -45,10 +46,10 @@ public class DraggableShape {
     private double initialX;
     private double initialY;
 
-    // NUEVO: Sistema de overlays para mostrar impactos
+    // Sistema de overlays para mostrar impactos
     private Map<String, Rectangle> cellOverlays = new HashMap<>();
 
-    public DraggableShape(double widthPx, double heightPx, String imagePath, Logic logic, Runnable callback) {
+    public DraggableShape(double widthPx, double heightPx, String imagePath, GameLogic logic, Runnable callback) {
         // Guardar dimensiones originales
         this.originalWidth = widthPx;
         this.originalHeight = heightPx;
@@ -77,7 +78,7 @@ public class DraggableShape {
         group = new Group();
         group.getChildren().addAll(backgroundRect, imageView);
 
-        // NUEVO: Crear overlays para cada celda del barco
+        // Crear overlays para cada celda del barco
         createCellOverlays();
 
         group.setTranslateX(0);
@@ -88,7 +89,7 @@ public class DraggableShape {
     }
 
     /**
-     * NUEVO: Crea los overlays transparentes para cada celda del barco
+     * Crea los overlays transparentes para cada celda del barco
      */
     private void createCellOverlays() {
         int currentWidthCells = isVertical ? heightCells : widthCells;
@@ -116,7 +117,7 @@ public class DraggableShape {
     }
 
     /**
-     * NUEVO: Actualiza los overlays cuando el barco cambia de orientación
+     * Actualiza los overlays cuando el barco cambia de orientación
      */
     private void updateCellOverlays() {
         // Remover overlays existentes
@@ -130,7 +131,7 @@ public class DraggableShape {
     }
 
     /**
-     * NUEVO: Marca una celda específica del barco como impactada
+     * Marca una celda específica del barco como impactada
      * @param globalCol Columna global en el tablero
      * @param globalRow Fila global en el tablero
      * @param impactType "TOCADO" = amarillo, "HUNDIDO" = rojo
@@ -176,7 +177,7 @@ public class DraggableShape {
     }
 
     /**
-     * NUEVO: Marca todo el barco como hundido (todas las celdas en rojo)
+     * Marca todo el barco como hundido (todas las celdas en rojo)
      */
     public void markShipAsDestroyed() {
         for (Rectangle overlay : cellOverlays.values()) {
@@ -284,7 +285,7 @@ public class DraggableShape {
                 imageView.setLayoutX((backgroundRect.getWidth() - imageView.getFitWidth()) / 2);
                 imageView.setLayoutY((backgroundRect.getHeight() - imageView.getFitHeight()) / 2);
 
-                // NUEVO: Actualizar overlays después de la rotación
+                // Actualizar overlays después de la rotación
                 updateCellOverlays();
 
                 // Mantener la posición y reacomodar
@@ -302,9 +303,9 @@ public class DraggableShape {
         double currentTranslateX = group.getTranslateX();
         double currentTranslateY = group.getTranslateY();
 
-        // USAR LAS COORDENADAS EXACTAS DEL MAINAPP
-        double playerBoardStartX = MainApp.getPlayerBoardStartX();
-        double playerBoardStartY = MainApp.getPlayerBoardStartY();
+        // USAR LAS COORDENADAS EXACTAS DE LAS CONSTANTES
+        double playerBoardStartX = Constants.BOARD_START_X;
+        double playerBoardStartY = Constants.BOARD_START_Y;
         double playerBoardEndX = playerBoardStartX + (Constants.GRID_COLS * Constants.CELL_SIZE);
         double playerBoardEndY = playerBoardStartY + (Constants.GRID_ROWS * Constants.CELL_SIZE);
 
@@ -414,8 +415,8 @@ public class DraggableShape {
             int finalRow = validPosition[1];
 
             // Usar las mismas coordenadas exactas que en snapToPlayerBoardOnly
-            double snappedX = MainApp.getPlayerBoardStartX() + (finalCol * Constants.CELL_SIZE);
-            double snappedY = MainApp.getPlayerBoardStartY() + (finalRow * Constants.CELL_SIZE);
+            double snappedX = Constants.BOARD_START_X + (finalCol * Constants.CELL_SIZE);
+            double snappedY = Constants.BOARD_START_Y + (finalRow * Constants.CELL_SIZE);
 
             group.setTranslateX(snappedX);
             group.setTranslateY(snappedY);
@@ -434,7 +435,7 @@ public class DraggableShape {
         } else {
             // Si no hay posición válida, mover el barco fuera del tablero (debajo)
             double fallbackX = 50;
-            double fallbackY = MainApp.getPlayerBoardStartY() + (Constants.GRID_ROWS * Constants.CELL_SIZE) + 40;
+            double fallbackY = Constants.BOARD_START_Y + (Constants.GRID_ROWS * Constants.CELL_SIZE) + 40;
             group.setTranslateX(fallbackX);
             group.setTranslateY(fallbackY);
             currentGridCol = -1;

@@ -1,8 +1,10 @@
 module com.example.batallanaval {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
-
-    opens com.example.batallanaval to javafx.fxml;
+    exports com.example.batallanaval.controlador;
+    exports com.example.batallanaval.modelo;
+    exports com.example.batallanaval.vista;
     exports com.example.batallanaval;
 }

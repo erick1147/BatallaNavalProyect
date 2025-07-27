@@ -1,4 +1,4 @@
-package com.example.batallanaval;
+package com.example.batallanaval.modelo;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
@@ -117,19 +117,3 @@ public class Ship implements Serializable {
         return sb.toString();
     }
 }
-
-/* public class RecorrerMapEntrySet {
-    public static void main(String[] args) {
-        Map<String, Integer> edades = new HashMap<>();
-        edades.put("Ana", 25);
-        edades.put("Juan", 30);
-        edades.put("María", 28);
-
-        // Usando un for-each para recorrer el conjunto de entradas
-        for (Map.Entry<String, Integer> entrada : edades.entrySet()) {
-            String nombre = entrada.getKey();
-            Integer edad = entrada.getValue();
-            System.out.println("Nombre: " + nombre + ", Edad: " + edad);
-        }
-    }
-}*/

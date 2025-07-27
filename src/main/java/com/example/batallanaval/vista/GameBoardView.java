@@ -1,8 +1,8 @@
-// GameBoardView.java
-package com.example.batallanaval;
+package com.example.batallanaval.vista;
 
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import com.example.batallanaval.modelo.Constants;
 
 /**
  * La clase `GameBoardView` es una componente de la interfaz de usuario que se encarga

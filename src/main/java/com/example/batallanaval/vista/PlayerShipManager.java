@@ -1,13 +1,13 @@
-// PlayerShipManager.java - Versión con Soporte para Callbacks
-package com.example.batallanaval;
+package com.example.batallanaval.vista;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.shape.Rectangle;
+import com.example.batallanaval.modelo.Constants;
+import com.example.batallanaval.modelo.GameLogic;
 
 public class PlayerShipManager {
 
-    private final String shipImagePath = "D://Proyectos Intel//navaleri//src//main//resources//com//example//navaleri//images//ship_part.png";
+    private final String shipImagePath = "/ship_part.png";
 
     /**
      * Crea todas las instancias de los barcos del jugador y los posiciona inicialmente
@@ -17,7 +17,7 @@ public class PlayerShipManager {
      * @param positionChangeCallback Callback que se ejecuta cuando un barco cambia de posición
      * @return Una lista de objetos DraggableShape que representan los barcos del jugador
      */
-    public List<DraggableShape> createAndPositionShips(Logic gameLogic, Runnable positionChangeCallback) {
+    public List<DraggableShape> createAndPositionShips(GameLogic gameLogic, Runnable positionChangeCallback) {
         List<DraggableShape> playerShips = new ArrayList<>();
 
         System.out.println("=== CREANDO BARCOS DEL JUGADOR ===");
@@ -128,13 +128,13 @@ public class PlayerShipManager {
 
     /**
      * Posiciona los barcos debajo de los tableros de juego en filas organizadas
-     * usando las coordenadas exactas del MainApp
+     * usando las coordenadas exactas de Constants
      * @param playerShips Lista de barcos a posicionar
      */
     private void positionShipsBelowBoards(List<DraggableShape> playerShips) {
-        // Usar las coordenadas exactas del MainApp
-        double boardStartX = MainApp.getPlayerBoardStartX();
-        double boardStartY = MainApp.getPlayerBoardStartY();
+        // Usar las coordenadas exactas de Constants
+        double boardStartX = Constants.BOARD_START_X;
+        double boardStartY = Constants.BOARD_START_Y;
 
         // Calcular la posición Y donde empezarán los barcos (debajo de los tableros)
         double boardHeight = Constants.GRID_ROWS * Constants.CELL_SIZE;
@@ -190,25 +190,6 @@ public class PlayerShipManager {
                     currentX + ", " + currentY + ") - Tamaño: " + shipWidth + "x" + shipHeight);
         }
 
-        System.out.println("=== TODOS LOS BARCOS POSICIONADOS ===");
-        System.out.println("INSTRUCCIONES PARA EL JUGADOR:");
-        System.out.println("1. Arrastra los barcos al tablero IZQUIERDO (tablero del jugador - AZUL)");
-        System.out.println("2. Click derecho para rotar un barco");
-        System.out.println("3. Los barcos se alinearán automáticamente a las celdas del tablero");
-        System.out.println("4. Los barcos NO pueden colocarse en el tablero de la CPU (derecho - ROJO)");
-        System.out.println("5. Una vez que todos los barcos estén colocados, se activará el botón 'INICIAR JUEGO'");
-        System.out.println("6. Después de presionar 'INICIAR JUEGO', los barcos no se podrán mover");
-        System.out.println("7. Click en una celda del tablero azul para ver información de debugging");
-        System.out.println();
-        System.out.println("COMPOSICIÓN DE LA FLOTA:");
-        System.out.println("• 1 Portaaviones (4 casillas)");
-        System.out.println("• 2 Submarinos (3 casillas cada uno)");
-        System.out.println("• 3 Destructores (2 casillas cada uno)");
-        System.out.println("• 4 Fragatas (1 casilla cada una)");
-        System.out.println("• TOTAL: 10 barcos ocupando 20 casillas");
-        System.out.println();
-        System.out.println("NOTA: El botón 'INICIAR JUEGO' se habilitará automáticamente cuando todos");
-        System.out.println("      los barcos estén colocados correctamente en el tablero del jugador.");
-        System.out.println();
+
     }
 }

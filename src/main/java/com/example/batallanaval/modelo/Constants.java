@@ -1,5 +1,4 @@
-/// Constants.java - Versión Actualizada sin Espacio Lateral
-package com.example.batallanaval;
+package com.example.batallanaval.modelo;
 
 /**
  * La clase `Constants` actúa como un repositorio centralizado para todos los valores fijos y predefinidos
@@ -53,6 +52,8 @@ public class Constants {
     public static final double FRIGATE_GROUP_WIDTH = CELL_SIZE * FRIGATE_WIDTH_CELLS;
     public static final double FRIGATE_GROUP_HEIGHT = CELL_SIZE * FRIGATE_HEIGHT_CELLS;
 
-    // Nota: Se eliminó PLAYER_SHIP_AREA_WIDTH ya que los barcos ahora aparecen debajo de los tableros
-    // y no necesitamos espacio lateral reservado para ellos.
+    // COORDENADAS EXACTAS DEL TABLERO - CRÍTICAS PARA ALINEACIÓN
+    public static final double BOARD_START_X = 10.0;
+    public static final double BOARD_START_Y = 30.0;
+    public static final double BOARD_SPACING = 20.0;
 }
